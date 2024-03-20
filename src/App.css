@@ -1,0 +1,72 @@
+
+
+.header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header-top-left {
+  display: flex;
+  align-items: center;
+}
+
+.header-top-left-items {
+  margin-right: 10px; 
+}
+
+.header-top-left-items a {
+  text-decoration: none; /* Bỏ gạch chân cho link */
+  color: hsl(211, 70%, 41%); /* Đặt màu xanh dương cho chữ */
+}
+
+.header-top-left-items select {
+  border: none; /* Bỏ viền cho select */
+  color: hsl(211, 70%, 41%);
+}
+
+
+.header-top-right {
+  display: flex;
+  align-items: center;
+}
+
+.header-top-right-items {
+  margin-left: 10px;
+}
+
+.header-top-right button {
+  border: none; /* Bỏ viền của button */
+}
+
+
+/* Css header-down  */
+.header-down {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  float: left;
+  height: 50px;
+  margin-bottom: 10px;
+}
+
+.header-down-items {
+  margin-right: 10px; /* Khoảng cách giữa các item */
+}
+
+.header-down input[type="text"],
+.header-down input[type="date"],
+.header-down select {
+  margin-right: 10px; /* Khoảng cách giữa các input và select */
+  height: 25px; 
+  width: 170px; 
+  border-radius: 2px;
+  border: 1px solid #ccc;
+}
+
+.header-down button {
+  margin-right: 10px; /* Khoảng cách giữa button và các phần tử khác */
+  height: 25px; 
+  width: 100px; 
+  border-radius: 2px;
+}
