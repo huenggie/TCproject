@@ -1,6 +1,6 @@
 .table-responsive {
-    width: 400px;
-    height: 300px;
+    width: 100%;
+    height: fit-content;
     border-collapse: collapse;
     font-size: 13px; /* Thiết lập kích thước font chữ trong bảng */
   }
@@ -8,10 +8,13 @@
   th, td {
     border: 1px solid #ddd;
     padding: 8px;
+    vertical-align: middle; /* Canh giữa nội dung theo chiều dọc */
   }
   
   th {
     background-color: #f2f2f2;
+    height: 50px; /* Điều chỉnh chiều cao của thẻ th */
+    border: 1px solid #ddd; 
   }
   
   tr:nth-child(even) {
@@ -50,3 +53,44 @@
     }
   }
   
+
+
+  /* Css header-down  */
+.header-down {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  float: left;
+  height: 50px;
+  margin-bottom: 10px;
+}
+
+.header-down-items {
+  margin-right: 10px; /* Khoảng cách giữa các item */
+}
+
+.header-down input[type="text"],
+.header-down input[type="date"],
+.header-down select {
+  margin-right: 10px; /* Khoảng cách giữa các input và select */
+  height: 25px; 
+  width: 170px; 
+  border-radius: 2px;
+  border: 1px solid #ccc;
+}
+
+.header-down button {
+  margin-right: 10px; /* Khoảng cách giữa button và các phần tử khác */
+  height: 25px; 
+  width: 100px; 
+  border-radius: 2px;
+}
+
+
+/* CSS footer */
+.footer {
+  display: flex;
+  padding: 10px;
+  justify-content: space-between;
+  align-items: center;
+}

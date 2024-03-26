@@ -35,38 +35,10 @@
   margin-left: 10px;
 }
 
+.header-top-right-items select {
+  border: none;
+}
+
 .header-top-right button {
   border: none; /* Bỏ viền của button */
-}
-
-
-/* Css header-down  */
-.header-down {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  float: left;
-  height: 50px;
-  margin-bottom: 10px;
-}
-
-.header-down-items {
-  margin-right: 10px; /* Khoảng cách giữa các item */
-}
-
-.header-down input[type="text"],
-.header-down input[type="date"],
-.header-down select {
-  margin-right: 10px; /* Khoảng cách giữa các input và select */
-  height: 25px; 
-  width: 170px; 
-  border-radius: 2px;
-  border: 1px solid #ccc;
-}
-
-.header-down button {
-  margin-right: 10px; /* Khoảng cách giữa button và các phần tử khác */
-  height: 25px; 
-  width: 100px; 
-  border-radius: 2px;
 }
