@@ -6,8 +6,17 @@ export default class DHvanchuyen extends React.Component {
   state = {
     data: [],
     keyword: "",
-    rowsPerPage: 5, // Số hàng hiển thị mặc định
+    rowsPerPage: 10, // Số hàng hiển thị mặc định
     currentPage: 1,
+    // Thêm state để lưu trữ thông tin tạm thời từ các thẻ input và select
+    temporaryData: {
+      textInput: "",
+      dateInput: "",
+      numberInput: "",
+      statusSelect: "Trạng thái",
+      transportSelect: "Nhà vận tải",
+    },
+    filteredData: [], // Thêm state để lưu trữ dữ liệu sau khi lọc
   };
 
   componentDidMount() {
@@ -15,87 +24,143 @@ export default class DHvanchuyen extends React.Component {
       .get(`http://localhost:3000/web_data`)
       .then((res) => {
         const data = res.data;
-        this.setState({ data });
+        this.setState({ data, filteredData: data }); // Khởi tạo filteredData ban đầu
       })
       .catch((error) => console.log(error));
   }
 
+
   handleSearchChange = (e) => {
-    this.setState({ keyword: e.target.value });
+    const { name, value } = e.target;
+    this.setState({
+      temporaryData: { ...this.state.temporaryData, [name]: value },
+    });
   };
 
-  // filterData để lọc dữ liệu bằng thanh tìm kiếm
+  handleSearchSubmit = (e) => {
+    e.preventDefault();
+    this.filterDataFromAPI();
+  };
+
   filterData = () => {
-    const { data, keyword } = this.state;
-    return data.filter((item) =>
-      Object.values(item).some(
-        (value) =>
-          value &&
-          value.toString().toLowerCase().includes(keyword.toLowerCase())
-      )
-    );
+    const { filteredData, currentPage, rowsPerPage } = this.state;
+    const startIndex = (currentPage - 1) * rowsPerPage;
+    const endIndex = startIndex + rowsPerPage;
+    return filteredData.slice(startIndex, endIndex);
   };
 
-  handleRefresh = (e) => {
-    window.location.reload(false);
-  };
   handleChangeRowsPerPage = (e) => {
-    this.setState({ rowsPerPage: parseInt(e.target.value) });
+    this.setState({ rowsPerPage: parseInt(e.target.value), currentPage: 1 });
   };
+
   handleChangePage = (page) => {
     this.setState({ currentPage: page });
   };
 
+
+  filterDataFromAPI = () => {
+    const { temporaryData } = this.state;
+    const { textInput, dateInput, numberInput, statusSelect, transportSelect } = temporaryData;
+  
+    // Gọi API để lấy dữ liệu mới
+    axios.get(`http://localhost:3000/web_data`)
+      .then((res) => {
+        let filteredData = res.data;
+  
+        // Lọc dữ liệu dựa trên các trường tìm kiếm
+        filteredData = filteredData.filter((item) => {
+          const keyword = textInput.toLowerCase();
+          const formattedDateInput = dateInput ? new Date(dateInput).toLocaleDateString("en-GB") : ""; // Chuyển đổi định dạng ngày tìm kiếm
+  
+          return (
+            (textInput === "" || 
+              item.KHACH_HANG.toLowerCase().includes(keyword) ||
+              item.MA_DON_HANG.toLowerCase().includes(keyword) ||
+              item.SO_CONT.toLowerCase().includes(keyword)) &&
+            (!dateInput || item.NGAY_HOAN_THANH === formattedDateInput) && // So sánh ngày
+            (numberInput === "" || item.SO_CONT.toLowerCase().includes(numberInput.toLowerCase())) &&
+            (statusSelect === "Trạng thái" || item.TRANG_THAI === statusSelect) &&
+            (transportSelect === "Nhà vận tải" || item.NHA_VAN_TAI === transportSelect)
+          );
+        });
+  
+        // Cập nhật dữ liệu lọc vào state và reset trang về trang đầu tiên
+        this.setState({ filteredData, currentPage: 1 });
+      })
+      .catch((error) => console.log(error));
+  };
+  
+  
+  
+
   render() {
     return (
       <div>
-        <div className="header-down">
-          <div className="header-down-items">
-            <input
-              type="text"
-              placeholder="Mã chuyến, Khách hàng..."
-              value={this.state.keyword}
-              onChange={this.handleSearchChange}
-            ></input>
-          </div>
+        <form onSubmit={this.handleSearchSubmit}>
+          <div className="header-down">
+            <div className="header-down-items">
+              <input
+                type="text"
+                name="textInput"
+                placeholder="Mã chuyến, Khách hàng..."
+                value={this.state.temporaryData.textInput}
+                onChange={this.handleSearchChange}
+              />
+            </div>
 
-          <div className="header-down-items">
-            <input type="date" />
-          </div>
+            <div className="header-down-items">
+              <input
+                type="date"
+                name="dateInput"
+                value={this.state.temporaryData.dateInput}
+                onChange={this.handleSearchChange}
+              />
+            </div>
 
-          <div className="header-down-items">
-            <select>
-              <option>Số cont</option>
-              <option value="MRU3157427">MRU3157427</option>
-              <option value="BMOU6402204">BMOU6402204</option>
-            </select>
-          </div>
+            <div className="header-down-items">
+              <input
+                type="text"
+                name="numberInput"
+                placeholder="Số cont..."
+                value={this.state.temporaryData.numberInput}
+                onChange={this.handleSearchChange}
+              />
+            </div>
 
-          <div className="header-down-items">
-            <select>
-              <option>Trạng thái</option>
-              <option value="Chưa gắn">Chưa gắn</option>
-              <option value="Đang làm">Đang làm</option>
-              <option value="Hoàn thành">Hoàn thành</option>
-            </select>
-          </div>
+            <div className="header-down-items">
+              <select
+                name="statusSelect"
+                value={this.state.temporaryData.statusSelect}
+                onChange={this.handleSearchChange}
+              >
+                <option value="Trạng thái" disabled>
+                  Trạng thái
+                </option>
+                <option value="Chưa gắn">Chưa gắn</option>
+                <option value="Đang làm">Đang làm</option>
+                <option value="Hoàn thành">Hoàn thành</option>
+              </select>
+            </div>
 
-          <div className="header-down-items">
-            <select>
-              <option>Nhà vận tải</option>
-              <option value="ECOTRUCK">ECOTRUCK</option>
-              <option value="TRASIMEX">TRASIMEX</option>
-            </select>
-          </div>
+            <div className="header-down-items">
+              <select
+                name="transportSelect"
+                value={this.state.temporaryData.transportSelect}
+                onChange={this.handleSearchChange}
+              >
+                <option value="Nhà vận tải" disabled>
+                  Nhà vận tải
+                </option>
+                <option value="ECOTRUCK">ECOTRUCK</option>
+                <option value="TRASIMEX">TRASIMEX</option>
+              </select>
+            </div>
 
-          <div className="header-down-items">
-            <button onClick={this.handleRefresh}>Làm mới</button>
+            <div className="header-down-items">
+              <button type="submit">Tìm kiếm</button>
+            </div>
           </div>
-        </div>
-
-        <div>
-          <p>{this.state.startDate}</p>
-        </div>
+        </form>
 
         <div>
           <table className="table-responsive">
